@@ -87,8 +87,20 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		//// Write your code here
+		if (allocatedList.getSize() == 0){
+			System.out.println("size = 0, memoy: " + toString());
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		for (int i = 0; i < allocatedList.getSize(); i++) {
+			MemoryBlock allocatedBlock = allocatedList.getBlock(i);
+			if (allocatedBlock.baseAddress == address) {
+				allocatedList.remove(i);
+				freeList.addLast(allocatedBlock);
+				return;
+			}
+		}
 	}
+	
 	
 	/**
 	 * A textual representation of the free list and the allocated list of this memory space, 
@@ -104,6 +116,21 @@ public class MemorySpace {
 	 * In this implementation Malloc does not call defrag.
 	 */
 	public void defrag() {
-		//// Write your code here
+		if (freeList.getSize() <= 1) {
+			return;
+		}
+		Node current = freeList.getFirst();
+		while (current != null && current.next != null) {
+			MemoryBlock currentBlock = current.block;
+			MemoryBlock nextBlock = current.next.block;
+			if (currentBlock.getEndAddress() == nextBlock.baseAddress) {
+				int newLength = currentBlock.length + nextBlock.length;
+				currentBlock.length = newLength;
+				freeList.remove(current.next);
+			}
+			else{
+				current = current.next;
+			}
+		}
 	}
 }
