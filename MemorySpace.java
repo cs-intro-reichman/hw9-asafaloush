@@ -67,6 +67,7 @@ public class MemorySpace {
 				list.current.block.baseAddress += length;
 				list.current.block.length -= length;
 				if (list.current.block.length == 0) {
+					list.next();
 					freeList.remove(list.current);
 				}
             	return baseAddress;
