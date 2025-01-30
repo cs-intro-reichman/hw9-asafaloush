@@ -88,13 +88,21 @@ public class LinkedList {
 		Node newNode = new Node(block);
 		if (index == 0){
 			newNode.next = this.first;
+			first = newNode;
 			if (size == 0){
 				last = newNode;
 			}
 		}
 		else if (index == size){
-			this.last.next = newNode;
-			this.last = newNode;
+			if (last != null){
+				this.last.next = newNode;
+				this.last = newNode;
+			}
+			else{
+				this.first = newNode;
+			}
+			
+			
 		}
 		else{
 			Node prevNode = getNode (index-1);
@@ -160,7 +168,7 @@ public class LinkedList {
 					"index must be between 0 and size");
 		}
 		Node currentNode = getNode (index);
-		
+
 		return currentNode.block;
 	}	
 
