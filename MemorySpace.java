@@ -58,24 +58,25 @@ public class MemorySpace {
 	 * @return the base address of the allocated block, or -1 if unable to allocate
 	 */
 	public int malloc(int length) {		
-		ListIterator list = freeList.iterator();
-		while (list.hasNext()) {
-			if (list.current != null && list.current.block.length >= length) {
-				int baseAddress = list.current.block.baseAddress;
-				MemoryBlock block = new MemoryBlock(baseAddress, length);
-				allocatedList.addLast(block);
-				list.current.block.baseAddress += length;
-				list.current.block.length -= length;
-				if (list.current.block.length == 0) {
-					list.next(); 
-					freeList.remove(list.current);
+		ListIterator iterator = freeList.iterator();
+		while (iterator.hasNext()) {
+			if(iterator.current.block.length >= length) {
+				MemoryBlock newBlock = new MemoryBlock(iterator.current.block.baseAddress, length);
+				allocatedList.addLast(newBlock);
+				if (iterator.current.block.length == length) {
+					freeList.remove(iterator.current.block);
 				}
-				return block.baseAddress;
+				else {
+					MemoryBlock freeBlock = new MemoryBlock(iterator.current.block.baseAddress+length, iterator.current.block.length-length);
+					int index = freeList.indexOf(iterator.current.block);
+					freeList.add(index, freeBlock);
+					freeList.remove(index+1);
+				}
+				return newBlock.baseAddress;
 			}
-			// Move to the next node
-			list.next();
+			iterator.next();
 		}
-		return -1; // No suitable block found
+		return -1;
 	}
 
 
@@ -89,17 +90,18 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		if (allocatedList.getSize() == 0){
-			System.out.println("size = 0, memoy: " + toString());
-			throw new IllegalArgumentException("index must be between 0 and size");
+		if (allocatedList.getSize()==0) {
+			throw new IllegalArgumentException(
+					"index must be between 0 and size");
 		}
-		for (int i = 0; i < allocatedList.getSize(); i++) {
-            MemoryBlock allocatedBlock = allocatedList.getBlock(i);
-            if (allocatedBlock != null && allocatedBlock.baseAddress == address) {
-                allocatedList.remove(i);
-                freeList.addLast(allocatedBlock);
-                return;
+		ListIterator iterator = allocatedList.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.current.block.baseAddress==address) {
+				Node current = iterator.current;
+				freeList.addLast(current.block);
+				allocatedList.remove(current);
 			}
+			iterator.next();
 		}
 	}
 	
