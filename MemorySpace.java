@@ -92,11 +92,11 @@ public class MemorySpace {
 			throw new IllegalArgumentException("index must be between 0 and size");
 		}
 		for (int i = 0; i < allocatedList.getSize(); i++) {
-			MemoryBlock allocatedBlock = allocatedList.getBlock(i);
-			if (allocatedBlock.baseAddress == address) {
-				allocatedList.remove(i);
-				freeList.addLast(allocatedBlock);
-				return;
+            MemoryBlock allocatedBlock = allocatedList.getBlock(i);
+            if (allocatedBlock != null && allocatedBlock.baseAddress == address) {
+                allocatedList.remove(i);
+                freeList.addLast(allocatedBlock);
+                return;
 			}
 		}
 	}
@@ -121,16 +121,15 @@ public class MemorySpace {
 		}
 		Node current = freeList.getFirst();
 		while (current != null && current.next != null) {
-			MemoryBlock currentBlock = current.block;
-			MemoryBlock nextBlock = current.next.block;
-			if (currentBlock.getEndAddress() == nextBlock.baseAddress) {
-				int newLength = currentBlock.length + nextBlock.length;
-				currentBlock.length = newLength;
-				freeList.remove(current.next);
-			}
-			else{
-				current = current.next;
-			}
+            MemoryBlock currentBlock = current.block;
+            MemoryBlock nextBlock = current.next.block;
+
+            if (currentBlock.baseAddress + currentBlock.length == nextBlock.baseAddress) {
+                currentBlock.length += nextBlock.length;
+                freeList.remove(current.next);
+            } else {
+                current = current.next;
+            }
 		}
 	}
 }
