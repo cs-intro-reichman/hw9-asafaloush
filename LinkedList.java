@@ -88,21 +88,19 @@ public class LinkedList {
 		Node newNode = new Node(block);
 		if (index == 0){
 			newNode.next = this.first;
-			first = newNode;
+			this.first = newNode;
 			if (size == 0){
-				last = newNode;
+				this.last = newNode;
 			}
 		}
 		else if (index == size){
-			if (last != null){
+			if (this.last != null){
 				this.last.next = newNode;
-				this.last = newNode;
 			}
 			else{
 				this.first = newNode;
 			}
-			
-			
+			this.last = newNode;
 		}
 		else{
 			Node prevNode = getNode (index-1);
