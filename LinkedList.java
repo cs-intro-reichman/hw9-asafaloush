@@ -143,7 +143,7 @@ public class LinkedList {
 		}
 		size ++;
 	}
-	}
+	
 
 	/**
 	 * Gets the memory block located at the given index in this list.
@@ -173,7 +173,7 @@ public class LinkedList {
 	public int indexOf(MemoryBlock block) {
 		Node currentNode = this.first;
 		for (int i = 0; i < size; i++){
-			if (currentNode.block == block){
+			if (currentNode.block.equals(block)){
 				return i;
 			}
 			currentNode = currentNode.next;
@@ -220,7 +220,12 @@ public class LinkedList {
 	 *         if index is negative or greater than or equal to size
 	 */
 	public void remove(int index) {
-		//// Write your code here
+		if (index < 0 || index > size) {
+			throw new IllegalArgumentException(
+					"index must be between 0 and size");
+		}
+		Node currentNode = getNode(index);
+		remove (currentNode);
 	}
 
 	/**
@@ -231,7 +236,12 @@ public class LinkedList {
 	 *         if the given memory block is not in this list
 	 */
 	public void remove(MemoryBlock block) {
-		//// Write your code here
+		if (indexOf(block) == -1){
+			throw new IllegalArgumentException(
+					"index must be between 0 and size");
+		} else {
+			remove(indexOf(block));
+		}
 	}	
 
 	/**
@@ -245,7 +255,12 @@ public class LinkedList {
 	 * A textual representation of this list, for debugging.
 	 */
 	public String toString() {
-		//// Replace the following statement with your code
-		return "";
+		String str = "";
+		Node currentNode = first;
+		while (currentNode != null) {
+		str = str + currentNode.block + " ";
+		currentNode = currentNode.next;
+		}
+		return str;
 	}
 }
